@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerenciador de Pedidos</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+<h1 class="header-text">Gerenciador de Pedidos</h1>
+<hr>
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+<ul class="flashes">
+{% for category, message in messages %}
+<p class="{{ category }}">{{ message }}</p>
+{% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+
+    <div class="main-options">
+        {% if current_user.is_authenticated %}
+            <p>Bem-vindo, {{ current_user.username }}!</p>
+            <div class="option-row">
+                <a href="{{ url_for('clientes') }}" class="button-link login-link">Gerenciar Clientes</a>
+                <a href="{{ url_for('pedidos') }}" class="button-link login-link">Gerenciar Pedidos</a>
+                <a href="{{ url_for('gestao_financeira') }}" class="button-link login-link">Gestão Financeira</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin_users') }}" class="button-link admin-link">Gerenciar Usuários</a>
+                {% endif %}
+                <a href="{{ url_for('logout') }}" class="button-link logout-link">Sair</a>
+            </div>
+        {% else %}
+            <p>Por favor, faça login ou registre-se para continuar.</p>
+            <div class="option-row">
+                <a href="{{ url_for('login') }}" class="button-link login-link">Login</a>
+                <a href="{{ url_for('register') }}" class="button-link register-link">Registro</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+</body>
+</html>
