@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestão Financeira</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container">
+<h1 class="header-text">Gestão Financeira</h1>
+<a href="{{ url_for('index') }}" class="back-link">← Voltar para o Início</a>
+<hr>
+
+    <h2 class="sub-header-text">Contas a Receber</h2>
+    <form method="GET" class="filter-form">
+        <div class="form-row">
+            <label for="mes">Filtrar por Mês:</label>
+            <select id="mes" name="mes">
+                {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m == mes %}selected{% endif %}>{{ m }}</option>
+                {% endfor %}
+            </select>
+            <label for="ano">Filtrar por Ano:</label>
+            <select id="ano" name="ano">
+                {% for y in range(2023, 2030) %}
+                    <option value="{{ y }}" {% if y == ano %}selected{% endif %}>{{ y }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" class="filter-button">Filtrar</button>
+        </div>
+    </form>
+
+    <div class="summary-cards">
+        <div class="card total-receber-card">
+            <p>Total a Receber</p>
+            <h3>R$ {{ "%.2f"|format(total_a_receber) }}</h3>
+        </div>
+        <div class="card total-baixado-card">
+            <p>Total Baixado</p>
+            <h3>R$ {{ "%.2f"|format(total_baixado) }}</h3>
+        </div>
+    </div>
+
+    <h3 class="sub-header-text">Fluxo de Caixa - {{ mes }}/{{ ano }}</h3>
+    {% if parcelas_do_mes %}
+        <div class="export-button-container">
+            <a href="{{ url_for('exportar_pedidos') }}" class="button-link export-button">Exportar para Excel</a>
+        </div>
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Nº do Pedido</th>
+                    <th>Cliente</th>
+                    <th>Valor da Parcela</th>
+                    <th>Nº da Parcela</th>
+                    <th>Vencimento</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for parcela in parcelas_do_mes %}
+                    <tr>
+                        <td>{{ parcela.numero_pedido }}</td>
+                        <td>{{ parcela.cliente_nome }}</td>
+                        <td>R$ {{ "%.2f"|format(parcela.valor) }}</td>
+                        <td>{{ parcela.parcelas }}</td>
+                        <td>{{ parcela.data_vencimento.strftime('%d/%m/%Y') }}</td>
+                        <td><span class="status-badge {% if parcela.status == 'Baixado' %}baixado-badge{% else %}pendente-badge{% endif %}">{{ parcela.status }}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhuma parcela a receber com vencimento neste mês.</p>
+    {% endif %}
+</div>
+
+</body>
+</html>
