@@ -28,7 +28,7 @@ def load_user(user_id):
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(20), nullable=False, unique=True)
-    password = db.Column(db.String(120), nullable=False)
+    password = db.Column(db.String(256), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
 
 class Cliente(db.Model):
@@ -318,4 +318,5 @@ with app.app_context():
     db.create_all()
 
 if __name__ == '__main__':
+
     app.run(debug=True)
